@@ -15,19 +15,19 @@ jobs:
       - name: 🛠 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: 🏗 Install Python, Playwright & Allure Dependencies
+      - name: 🏗 Install Dependencies (Playwright & Allure)
         run: |
           pip install --upgrade pip
-          pip install pytest behave allure-behave
+          pip install playwright allure-behave
           playwright install --with-deps
 
       - name: 🏗 Install Allure via Tarball (Fix for `allure-commandline` not found)
         run: |
-          wget https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
+          wget -q https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
           tar -xzf allure-2.24.0.tgz
           sudo mv allure-2.24.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
-          allure --version
+          allure --version || true
 
       - name: 🛠 Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -35,27 +35,36 @@ jobs:
       - name: 🛠 Build Docker Image
         run: docker build -t bigbank-tests .
 
-      - name: 📊 Run Behave Tests & Generate Allure Results
-        run: |
-          mkdir -p ${{ github.workspace }}/allure-results
-          docker run --rm -v ${{ github.workspace }}/allure-results:/app/allure-results bigbank-tests \
-            behave -f allure_behave.formatter:AllureFormatter -o /app/allure-results || true
+      - name: 🛠 Ensure Clean Test Reports Directory
+        run: rm -rf ${{ github.workspace }}/test-reports && mkdir -p ${{ github.workspace }}/test-reports
 
-      - name: 📊 Generate Allure HTML Report
+      - name: 📊 Run Behave Tests in Docker & Generate Reports
         run: |
-          mkdir -p ${{ github.workspace }}/allure-report
-          allure generate ${{ github.workspace }}/allure-results -o ${{ github.workspace }}/allure-report --clean || true
+          docker run --rm -v ${{ github.workspace }}/test-reports:/app/test-reports bigbank-tests \
+            behave --format=behave_html_formatter:HTMLFormatter --outfile=/app/test-reports/report.html \
+                   --format=allure_behave.formatter:AllureFormatter -o /app/test-reports/allure-results || true
+
+      - name: 📤 Upload Behave HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: behave-report
+          path: test-reports/report.html
+          if-no-files-found: ignore
+
+      - name: 📤 Upload Allure Report Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: test-reports/allure-results
+          if-no-files-found: ignore
+
+      - name: 📊 Generate Allure Report
+        run: |
+          allure generate ${{ github.workspace }}/test-reports/allure-results -o ${{ github.workspace }}/test-reports/allure-report --clean || true
 
       - name: 📤 Upload Allure HTML Report
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
-          path: ${{ github.workspace }}/allure-report/
-          if-no-files-found: ignore
-
-      - name: 📤 Upload Allure Raw JSON Results
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results
-          path: ${{ github.workspace }}/allure-results/
+          path: test-reports/allure-report
           if-no-files-found: ignore
