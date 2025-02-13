@@ -38,9 +38,6 @@ jobs:
       - name: ⏳ Wait for Allure Service to Start
         run: sleep 10  # Ensures service is fully initialized
 
-      - name: Debug List Allure Results Directory
-        run: ls -lah ${{ github.workspace }}/allure-results/
-
       - name: 📊 Generate Allure Report
         run: |
           echo "Checking if Allure service is running..."
@@ -49,10 +46,13 @@ jobs:
           echo "Generating Allure report..."
           curl -X GET "http://localhost:5050/allure-docker-service/projects/default/reports/latest"
 
-      - name: 🔍 Copy Allure Report for Upload
+      - name: 📤 Copy Allure Report for Upload
         run: |
-          mkdir -p ${{ github.workspace }}/allure-report
+          echo "Copying generated Allure report from Docker container..."
           docker cp allure:/app/allure-report ${{ github.workspace }}/allure-report || echo "No report found!"
+
+      - name:  List Allure Report Directory
+        run: ls -lah ${{ github.workspace }}/allure-report/
 
       - name: 📤 Upload Allure Report
         uses: actions/upload-artifact@v4
