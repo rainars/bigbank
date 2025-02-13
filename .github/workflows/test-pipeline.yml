@@ -1,4 +1,4 @@
-name: BigBank Behave Tests
+name: BigBank Playwright Tests
 
 on:
   push:
@@ -14,6 +14,11 @@ jobs:
     steps:
       - name: 🛠 Checkout Repository
         uses: actions/checkout@v4
+
+      - name: 🏗 Install Playwright Dependencies
+        run: |
+          pip install playwright
+          playwright install --with-deps
 
       - name: 🛠 Set up Docker Buildx
         uses: docker/setup-buildx-action@v2

@@ -10,6 +10,10 @@ COPY . /app
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Install Playwright and required browsers
+RUN pip install playwright
+RUN playwright install --with-deps
+
 # Install behave-html-formatter for HTML reports
 RUN pip install behave-html-formatter
 
