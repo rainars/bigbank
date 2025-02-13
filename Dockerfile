@@ -18,4 +18,7 @@ RUN playwright install --with-deps
 ENV PYTHONPATH="/app"
 
 # Debugging before executing tests
-CMD echo "Running tests..." && ls -la /app && xvfb-run --auto-servernum behave features/
+#CMD echo "Running tests..." && ls -la /app && xvfb-run --auto-servernum behave features/
+
+# Run Behave tests when container starts
+CMD ["behave", "--format=pretty", "--no-skipped", "--color", "features/"]

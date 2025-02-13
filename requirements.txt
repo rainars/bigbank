@@ -1,3 +1,5 @@
 behave
 requests
 playwright
+pytest
+pytest-html
