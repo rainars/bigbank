@@ -26,8 +26,9 @@ jobs:
 
       - name: 📊 Generate Playwright Test Report
         run: |
-             mkdir -p test-reports
-             docker run --rm bigbank-tests pytest --html=test-reports/report.html --self-contained-html
+          mkdir -p test-reports
+          docker run --rm -v $(pwd)/test-reports:/app/test-reports bigbank-tests pytest \
+          --html=/app/test-reports/report.html --self-contained-html --ignore=Lib/site-packages
 
       - name: 📤 Upload Test Report (Updated)
         uses: actions/upload-artifact@v4
