@@ -15,14 +15,6 @@ jobs:
       - name: 🛠 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: 🏗 Install Allure (Manual)
-        run: |
-          curl -sLo allure-2.24.0.tgz https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
-          tar -xzf allure-2.24.0.tgz
-          sudo mv allure-2.24.0 /opt/allure
-          sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
-          allure --version
-
       - name: 🛠 Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -34,9 +26,9 @@ jobs:
 
       - name: 📊 Generate Allure Report
         run: |
-          mkdir -p test-reports
+          mkdir -p ${{ github.workspace }}/test-reports
           docker run --rm -v ${{ github.workspace }}/test-reports:/app/test-reports bigbank-tests \
-            behave features/ --format=allure_behave -o /app/test-reports/
+            behave features/ --format=allure_behave.formatter:AllureFormatter -o /app/test-reports/
 
       - name: 📤 Upload Allure Report
         uses: actions/upload-artifact@v4
