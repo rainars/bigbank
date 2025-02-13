@@ -36,7 +36,10 @@ jobs:
             frankescobar/allure-docker-service
 
       - name: ⏳ Wait for Allure Service to Start
-        run: sleep 20  # Increased wait time to allow service to fully initialize
+        run: sleep 10  # Ensures service is fully initialized
+
+      - name:  List Allure Results Directory
+        run: ls -lah ${{ github.workspace }}/allure-results/
 
       - name: 📊 Generate Allure Report
         run: |
@@ -44,7 +47,7 @@ jobs:
           curl -s http://localhost:5050 || (echo "Allure service not available!" && exit 1)
           
           echo "Generating Allure report..."
-          curl -X GET "http://localhost:5050/generate"
+          curl -X GET "http://localhost:5050/allure-docker-service/generate-report"
 
       - name: 📤 Upload Allure Report
         uses: actions/upload-artifact@v4
