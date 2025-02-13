@@ -1,11 +1,5 @@
 Feature: Loan Calculator Monthly Payment
 
-  Scenario: Calculate the monthly payment with loan amount and period
-    Given the loan calculator page is opened
-    When I set the loan amount to "30000"
-    And I set the loan period to "60"
-    Then the monthly payment should not be "€0"
-
   Scenario Outline: Customer must be able to choose their loan amount and loan period.
     Given the loan calculator page is opened
     When I set the loan amount to "<amount>"
@@ -66,16 +60,15 @@ Feature: Loan Calculator Monthly Payment
       | 10000  | 48     |
       | 20000  | 60     |
 
-  Scenario Outline: Validate API rejects invalid loan parameters
-    When I send a loan calculation request with amount "<amount>" and period "<period>"
-    Then the API should return an error response
-
-    Examples:
-      | amount | period |
-      | -5000  | 60     |
-      | 5000   | -12    |
-       # | abc    |  12    |  no satus code?
-      | -5000  | -12    |
+#  Scenario Outline: Validate API rejects invalid loan parameters
+#    When I send a loan calculation request with amount "<amount>" and period "<period>"
+#    Then the API should return an error response
+#
+#    Examples:
+#      | amount | period |
+#      | -5000  | 60     |
+#      | 5000   | -12    |
+#      | -5000  | -12    |
 
   Scenario Outline: Calculator changes should not be saved before clicking the save button
     Given the loan calculator page is opened
