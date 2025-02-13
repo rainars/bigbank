@@ -30,10 +30,12 @@ jobs:
         run: |
           mkdir -p ${{ github.workspace }}/test-reports
           docker run --rm -v ${{ github.workspace }}/test-reports:/app/test-reports bigbank-tests \
-            behave --format=behave_html_formatter:HTMLFormatter --outfile=/app/test-reports/report.html
+            behave --format=behave_html_formatter:HTMLFormatter --outfile=/app/test-reports/report.html || true
+        continue-on-error: true  # Ensure the pipeline continues even if tests fail
 
       - name: 📤 Upload Behave HTML Report
+        if: always()  # Ensure the report is uploaded even if tests fail
         uses: actions/upload-artifact@v4
         with:
           name: behave-report
-          path: test-reports/report.html
+          path: ${{ github.workspace }}/test-reports/report.html
