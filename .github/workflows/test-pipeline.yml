@@ -15,9 +15,9 @@ jobs:
       - name: 🛠 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: 🏗 Install Playwright Dependencies
+      - name: 🏗 Install Dependencies
         run: |
-          pip install playwright
+          pip install playwright allure-behave
           playwright install --with-deps
 
       - name: 🛠 Set up Docker Buildx
@@ -26,16 +26,34 @@ jobs:
       - name: 🛠 Build Docker Image
         run: docker build -t bigbank-tests .
 
-      - name: 📊 Run Behave Tests in Docker & Generate HTML Report
+      - name: 🛠 Ensure Clean Test Reports Directory
+        run: rm -rf ${{ github.workspace }}/test-reports && mkdir -p ${{ github.workspace }}/test-reports
+
+      - name: 📊 Run Behave Tests in Docker & Generate Reports
         run: |
-          mkdir -p ${{ github.workspace }}/test-reports
           docker run --rm -v ${{ github.workspace }}/test-reports:/app/test-reports bigbank-tests \
-            behave --format=behave_html_formatter:HTMLFormatter --outfile=/app/test-reports/report.html || true
-        continue-on-error: true  # Ensure the pipeline continues even if tests fail
+            behave --format=behave_html_formatter:HTMLFormatter --outfile=/app/test-reports/report.html \
+                   --format=allure_behave.formatter:AllureFormatter -o /app/test-reports/allure-results || true
 
       - name: 📤 Upload Behave HTML Report
-        if: always()  # Ensure the report is uploaded even if tests fail
         uses: actions/upload-artifact@v4
         with:
           name: behave-report
-          path: ${{ github.workspace }}/test-reports/report.html
+          path: test-reports/report.html
+
+      - name: 📤 Upload Allure Report Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: test-reports/allure-results
+
+      - name: 📊 Generate Allure Report
+        run: |
+          pip install allure-commandline
+          allure generate ${{ github.workspace }}/test-reports/allure-results -o ${{ github.workspace }}/test-reports/allure-report --clean
+
+      - name: 📤 Upload Allure HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: test-reports/allure-report
