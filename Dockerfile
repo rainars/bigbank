@@ -10,15 +10,11 @@ COPY . /app
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Playwright dependencies
-RUN apt-get update && apt-get install -y xvfb
-RUN playwright install --with-deps
+# Install behave-html-formatter for HTML reports
+RUN pip install behave-html-formatter
 
-# Install Allure Behave formatter
-RUN pip install allure-behave
-
-# Set the environment variable for Behave to find the "features" directory
+# Set environment variable for Behave
 ENV PYTHONPATH="/app"
 
-# Run Behave tests when container starts
-CMD ["behave", "--format=pretty", "--no-skipped", "--color", "features/"]
+# Run Behave tests and generate an HTML report when the container starts
+CMD ["behave", "--format=html", "--outfile=/app/test-reports/report.html"]

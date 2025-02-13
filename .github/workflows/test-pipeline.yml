@@ -1,4 +1,4 @@
-name: BigBank Playwright Tests
+name: BigBank Behave Tests
 
 on:
   push:
@@ -21,36 +21,14 @@ jobs:
       - name: 🛠 Build Docker Image
         run: docker build -t bigbank-tests .
 
-      - name: 🏃 Run Tests in Docker & Generate Allure Results
+      - name: 📊 Run Behave Tests in Docker & Generate HTML Report
         run: |
-          mkdir -p ${{ github.workspace }}/allure-results
-          docker run --rm -v ${{ github.workspace }}/allure-results:/app/allure-results bigbank-tests \
-            behave features/ --format=allure_behave.formatter:AllureFormatter -o /app/allure-results/
+          mkdir -p ${{ github.workspace }}/test-reports
+          docker run --rm -v ${{ github.workspace }}/test-reports:/app/test-reports bigbank-tests \
+            behave --format=html --outfile=/app/test-reports/report.html
 
-      - name: 📊 Start Allure Docker Service
-        run: |
-          docker run -d --name allure \
-            -p 5050:5050 \
-            -v ${{ github.workspace }}/allure-results:/app/allure-results \
-            -v ${{ github.workspace }}/allure-report:/app/allure-report \
-            frankescobar/allure-docker-service
-
-      - name: ⏳ Wait for Allure Service
-        run: |
-          echo "Waiting for Allure service to start..."
-          sleep 5  # Give some time for the service to initialize
-
-      - name: 📊 Generate Allure Report
-        run: |
-          curl -X GET "http://localhost:5050/allure-docker-service/generate-report"
-
-      - name: 📂 Copy Allure Report for Upload
-        run: |
-          mkdir -p ${{ github.workspace }}/allure-report
-          docker cp allure:/app/allure-report ${{ github.workspace }}/allure-report
-
-      - name: 📤 Upload Allure Report
+      - name: 📤 Upload Behave HTML Report
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report
-          path: ${{ github.workspace }}/allure-report
+          name: behave-report
+          path: test-reports/report.html
