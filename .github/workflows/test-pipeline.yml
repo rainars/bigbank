@@ -22,7 +22,7 @@ jobs:
         run: docker build -t bigbank-tests .
 
       - name: 🏃 Run Tests in Docker
-        run: docker run --rm bigbank-tests
+        run: docker run --rm bigbank-tests behave --format=pretty --no-skipped --color
 
       - name: 📊 Generate Playwright Test Report
         run: |
