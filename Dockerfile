@@ -10,12 +10,12 @@ COPY . /app
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Allure Behave Plugin (Required for Allure reports)
-RUN pip install allure-behave
-
 # Install Playwright dependencies
 RUN apt-get update && apt-get install -y xvfb
 RUN playwright install --with-deps
+
+# Install Allure Behave formatter
+RUN pip install allure-behave
 
 # Set the environment variable for Behave to find the "features" directory
 ENV PYTHONPATH="/app"
