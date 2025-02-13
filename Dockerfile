@@ -31,6 +31,9 @@ RUN playwright install --with-deps
 # Ensure `greenlet` is installed (Fix for "No module named greenlet._greenlet")
 RUN pip install --force-reinstall greenlet
 
+# Copy tests explicitly (ensures they exist)
+COPY tests /app/tests
+
 # Set the environment variable for Behave to find the "features" directory
 ENV PYTHONPATH="/app"
 

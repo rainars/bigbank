@@ -22,16 +22,16 @@ jobs:
         run: docker build -t bigbank-tests .
 
       - name: 🏃 Run Tests in Docker
-        run: docker run --rm bigbank-tests behave --format=pretty --no-skipped --color
-
-      - name: 📊 Generate Playwright Test Report
+        run: docker run --rm bigbank-tests behave features/ --format=pretty --no-skipped --color
+        
+      - name: 📊 Generate Behave Test Report
         run: |
           mkdir -p test-reports
-          docker run --rm -v $(pwd)/test-reports:/app/test-reports bigbank-tests pytest \
-          --html=/app/test-reports/report.html --self-contained-html --ignore=Lib/site-packages
+          docker run --rm -v $(pwd)/test-reports:/app/test-reports bigbank-tests behave features/ --format=allure_behave -o test-reports/
 
-      - name: 📤 Upload Test Report (Updated)
+      - name: 📤 Upload Behave Test Report
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports
-          path: test-reports/report.html
+          name: behave-test-reports
+          path: test-reports/
+
