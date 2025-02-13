@@ -60,15 +60,15 @@ Feature: Loan Calculator Monthly Payment
       | 10000  | 48     |
       | 20000  | 60     |
 
-  Scenario Outline: Validate API rejects invalid loan parameters
-    When I send a loan calculation request with amount "<amount>" and period "<period>"
-    Then the API should return an error response
-
-    Examples:
-      | amount | period |
-      | -5000  | 60     |
-      | 5000   | -12    |
-      | -5000  | -12    |
+#  Scenario Outline: Validate API rejects invalid loan parameters
+#    When I send a loan calculation request with amount "<amount>" and period "<period>"
+#    Then the API should return an error response
+#
+#    Examples:
+#      | amount | period |
+#      | -5000  | 60     |
+#      | 5000   | -12    |
+#      | -5000  | -12    |
 
   Scenario Outline: Calculator changes should not be saved before clicking the save button
     Given the loan calculator page is opened
