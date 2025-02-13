@@ -4,3 +4,4 @@ playwright
 pytest
 pytest-html
 greenlet
+allure-behave
