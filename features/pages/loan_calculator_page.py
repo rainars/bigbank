@@ -1,3 +1,4 @@
+import re
 from locators import LoanCalculatorLocators
 
 
@@ -8,21 +9,37 @@ class LoanCalculatorPage:
         self.loan_period_input = self.page.locator(LoanCalculatorLocators.LOAN_PERIOD_INPUT)
         self.monthly_payment_locator = self.page.locator(LoanCalculatorLocators.MONTHLY_PAYMENT)
         self.save_button = self.page.locator(LoanCalculatorLocators.SAVE_BUTTON)
-        # self.page.locator("//span[text()='JÄTKA']/ancestor::button").click()
         self.close_button =  self.page.locator(LoanCalculatorLocators.CLOSE_BUTTON)
 
     def open(self, url):
         self.page.goto(url)
 
-    def set_loan_amount(self, amount):
+    def set_loan_amount(self, amount, scenario_name):
+        """Sets the loan amount and verifies it unless it's an edge case scenario."""
         self.loan_amount_input.fill(str(amount))
         self.page.wait_for_selector(LoanCalculatorLocators.WAIT_FOR_MONTHLY_PAYMENT)
         self.page.click(LoanCalculatorLocators.BODY)
 
-    def set_loan_period(self, period):
+        # Get actual value from input field
+        actual_amount = self.loan_amount_input.input_value()
+
+        # Normalize values (remove thousands separators)
+        normalized_actual = re.sub(r"[,.]", "", actual_amount)
+        normalized_expected = str(amount)
+
+        # Skip assertion if it's the "Edge cases" scenario
+        if "Edge cases" not in scenario_name:
+            assert normalized_actual == normalized_expected, f"Expected loan amount {normalized_expected}, but got {normalized_actual}"
+
+    def set_loan_period(self, period, scenario_name):
         self.loan_period_input.fill(str(period))
         self.page.wait_for_selector(LoanCalculatorLocators.WAIT_FOR_MONTHLY_PAYMENT)
         self.page.click(LoanCalculatorLocators.BODY)
+        # Verify that the input field contains the correct period
+        actual_period = self.loan_period_input.input_value()
+        # Skip assertion if it's the "Edge cases" scenario
+        if "Edge cases" not in scenario_name:
+            assert actual_period == str(period), f"Expected loan period {period}, but got {actual_period}"
 
     def get_monthly_payment(self):
         self.monthly_payment_locator.wait_for(state="visible", timeout=5000)

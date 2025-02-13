@@ -9,21 +9,19 @@ def open_loan_calculator_page(context):
     context.loan_calculator = LoanCalculatorPage(context.page)
     context.loan_calculator.open(Config.LOAN_CALCULATOR_URL)
 
-
 @when('I set the loan amount to "{amount}"')
 def set_loan_amount(context, amount):
-    context.loan_calculator.set_loan_amount(amount)
-
+    scenario_name = context.scenario.name  # Capture scenario name
+    context.loan_calculator.set_loan_amount(amount, scenario_name)
 
 @when('I set the loan period to "{period}"')
 def set_loan_period(context, period):
-    context.loan_calculator.set_loan_period(period)
-
+    scenario_name = context.scenario.name  # Correct variable name
+    context.loan_calculator.set_loan_period(period, scenario_name)
 
 @when("I close the loan calculator without saving")
 def close_modal_without_saving(context):
     context.loan_calculator.close_modal_without_saving()
-
 
 @when("I reopen the loan calculator")
 def reopen_loan_calculator(context):
@@ -31,7 +29,6 @@ def reopen_loan_calculator(context):
     print("✅ Clicked Edit Button to reopen calculator")
     context.page.wait_for_selector("input[name='header-calculator-amount']", state="visible")
     print("✅ Loan calculator modal reopened successfully")
-
 
 @then("the loan amount should be the default value")
 def verify_default_loan_amount(context):
