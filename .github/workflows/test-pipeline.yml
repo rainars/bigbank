@@ -21,7 +21,7 @@ jobs:
       - name: 🛠 Build Docker Image
         run: docker build -t bigbank-tests .
 
-      - name: 🏃 Run Tests in Docker
+      - name: 🏃 Run Tests in Docker & Generate Allure Results
         run: |
           mkdir -p ${{ github.workspace }}/allure-results
           docker run --rm -v ${{ github.workspace }}/allure-results:/app/allure-results bigbank-tests \
@@ -36,13 +36,18 @@ jobs:
             frankescobar/allure-docker-service
 
       - name: ⏳ Wait for Allure Service to Start
-        run: sleep 10
+        run: sleep 20  # Increased wait time to allow service to fully initialize
 
       - name: 📊 Generate Allure Report
-        run: curl -X GET "http://localhost:5050/generate"
+        run: |
+          echo "Checking if Allure service is running..."
+          curl -s http://localhost:5050 || (echo "Allure service not available!" && exit 1)
+          
+          echo "Generating Allure report..."
+          curl -X GET "http://localhost:5050/generate"
 
       - name: 📤 Upload Allure Report
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
-          path: allure-report/
+          path: ${{ github.workspace }}/allure-report/
