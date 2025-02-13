@@ -30,8 +30,8 @@ jobs:
           docker run --rm -v ${{ github.workspace }}/test-reports:/app/test-reports bigbank-tests \
             behave features/ --format=allure_behave.formatter:AllureFormatter -o /app/test-reports/
 
-         - name: 📊 Generate Allure HTML Report
-           run: |
+      - name: 📊 Generate Allure HTML Report
+        run: |
             docker run --rm \
               -v ${{ github.workspace }}/allure-results:/app/allure-results \
               -v ${{ github.workspace }}/allure-report:/app/allure-report \
