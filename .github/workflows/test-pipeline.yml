@@ -47,9 +47,16 @@ jobs:
           name: allure-results
           path: test-reports/allure-results
 
+      - name: 🏗 Install Allure via Tarball (Fix for `allure-commandline` not found)
+        run: |
+          wget https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
+          tar -xzf allure-2.24.0.tgz
+          sudo mv allure-2.24.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
+          allure --version
+
       - name: 📊 Generate Allure Report
         run: |
-          pip install allure-commandline
           allure generate ${{ github.workspace }}/test-reports/allure-results -o ${{ github.workspace }}/test-reports/allure-report --clean
 
       - name: 📤 Upload Allure HTML Report
