@@ -25,7 +25,7 @@ jobs:
         run: |
           mkdir -p ${{ github.workspace }}/test-reports
           docker run --rm -v ${{ github.workspace }}/test-reports:/app/test-reports bigbank-tests \
-            behave --format=html --outfile=/app/test-reports/report.html
+            behave --format=behave_html_formatter:HTMLFormatter --outfile=/app/test-reports/report.html
 
       - name: 📤 Upload Behave HTML Report
         uses: actions/upload-artifact@v4

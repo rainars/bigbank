@@ -16,5 +16,5 @@ RUN pip install behave-html-formatter
 # Set environment variable for Behave
 ENV PYTHONPATH="/app"
 
-# Run Behave tests and generate an HTML report when the container starts
-CMD ["behave", "--format=html", "--outfile=/app/test-reports/report.html"]
+# Run Behave tests and generate an HTML report
+CMD ["behave", "--format=behave_html_formatter:HTMLFormatter", "--outfile=/app/test-reports/report.html"]
