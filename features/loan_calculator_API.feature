@@ -86,6 +86,6 @@ Scenario Outline: Validate loan calculations for different values
       | 5000   | "@@"   |
       | "###"  | "!!"   |
       | null   | 12     |
-     # | 5000   | null   |
+      | 5000   | null   |
 
 
