@@ -58,10 +58,10 @@ Scenario Outline: Validate loan calculations for different values
     Then the API should return a valid monthly payment and APRC
 
     Examples:
-      | amount  | period |
-      | 100     |  1     |
-      | 1000000 |  240   |
-      | 5000    |  180   |
+      | amount  | period |     description       |
+      | 100     |  1     |                       |
+      | 1000000 |  240   |                       |
+      | 5000    |  180   |   Mid-range period    |
 
 
     Scenario Outline: Validate API handles decimal values

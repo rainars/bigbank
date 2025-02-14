@@ -21,4 +21,5 @@ RUN pip install behave-html-formatter
 ENV PYTHONPATH="/app"
 
 # Run Behave tests and generate an HTML report
-CMD ["behave", "--format=behave_html_formatter:HTMLFormatter", "--outfile=/app/test-reports/report.html"]
+#CMD ["behave", "--format=behave_html_formatter:HTMLFormatter", "--outfile=/app/test-reports/report.html"]
+CMD ["behave", "--format=behave_html_formatter:HTMLFormatter", "--outfile=/app/test-reports/report.html", "--format=allure_behave.formatter:AllureFormatter", "-o", "/app/test-reports/allure-results"]

@@ -44,26 +44,69 @@ def send_loan_calculation_request(context, amount, period):
 
 @then("the API should return a valid monthly payment and APRC")
 def validate_api_response(context):
-    """Validates the API response contains a total repayable amount, monthly payment, and APRC."""
-    assert context.api_response is not None, "❌ No response received from API"
+    """Validates the API response contains correct loan calculation values and ensures numeric types."""
 
-    # Ensure required fields exist in response
-    assert "monthlyPayment" in context.api_response, "❌ API response missing 'monthlyPayment' key"
-    assert "apr" in context.api_response, "❌ API response missing 'apr' key"
-    assert "totalRepayableAmount" in context.api_response, "❌ API response missing 'totalRepayableAmount' key"
+    # Ensure API response exists
+    assert context.api_response is not None, "❌ API response is missing!"
 
-    # Extract values
-    context.api_monthly_payment = round(float(context.api_response.get("monthlyPayment", 0)), 2)
-    context.api_apr = round(float(context.api_response.get("apr", 0)), 2)
-    context.api_total_repayable = round(float(context.api_response.get("totalRepayableAmount", 0)), 2)
+    # Define expected keys and their types
+    expected_keys = {
+        "monthlyPayment": float,
+        "apr": float,
+        "totalRepayableAmount": float
+    }
 
-    # Print API response values
-    print(f"✅ API Monthly Payment: {context.api_monthly_payment}, API APRC: {context.api_apr}, API Total Repayable Amount: {context.api_total_repayable}")
+    # Validate presence of required keys
+    missing_keys = [key for key in expected_keys if key not in context.api_response]
+    assert not missing_keys, f"❌ API response is missing keys: {missing_keys}"
 
-    # Ensure values are valid (non-zero and not empty)
-    assert context.api_monthly_payment > 0, f"❌ Invalid API Monthly Payment: {context.api_monthly_payment}"
-    assert context.api_apr > 0, f"❌ Invalid API APRC: {context.api_apr}"
-    assert context.api_total_repayable > 0, f"❌ Invalid API Total Repayable Amount: {context.api_total_repayable}"
+    try:
+        # Extract values and enforce correct data types
+        for key, expected_type in expected_keys.items():
+            value = context.api_response[key]
+
+            # Ensure the value is numeric and not a string
+            if isinstance(value, str) or not isinstance(value, (int, float)):
+                raise TypeError(f"❌ Expected numeric type for '{key}', but got {type(value).__name__} with value: {value}")
+
+            # Store values in context with correct naming
+            setattr(context, f"api_{key}", round(expected_type(value), 2))
+
+        # Debugging output
+        print(f"✅ API Response Received:")
+        print(f"   - Monthly Payment: {context.api_monthlyPayment}")
+        print(f"   - APRC: {context.api_apr}")
+        print(f"   - Total Repayable Amount: {context.api_totalRepayableAmount}")
+
+        # Ensure values are positive and non-zero
+        assert context.api_monthlyPayment > 0, f"❌ Monthly Payment must be greater than 0, got {context.api_monthlyPayment}"
+        assert context.api_apr > 0, f"❌ APRC must be greater than 0, got {context.api_apr}"
+        assert context.api_totalRepayableAmount > 0, f"❌ Total Repayable Amount must be greater than 0, got {context.api_totalRepayableAmount}"
+
+    except TypeError as e:
+        if not hasattr(context, "failed"):
+            context.failed = False  # Initialize `context.failed` if missing
+        context.failed = True
+        raise AssertionError(f"❌ Data Type Error: {e}")
+
+    except KeyError as e:
+        if not hasattr(context, "failed"):
+            context.failed = False  # Initialize `context.failed` if missing
+        context.failed = True
+        raise AssertionError(f"❌ Missing expected key in API response: {e}")
+
+    except ValueError as e:
+        if not hasattr(context, "failed"):
+            context.failed = False
+        context.failed = True
+        raise AssertionError(f"❌ API returned invalid numerical values: {e}")
+
+    except Exception as e:
+        if not hasattr(context, "failed"):
+            context.failed = False
+        context.failed = True
+        raise AssertionError(f"❌ Unexpected error while processing API response: {e}")
+
 
 
 
