@@ -68,3 +68,18 @@ jobs:
           name: allure-report
           path: test-reports/allure-report
           if-no-files-found: ignore
+
+      - name: 📤 Deploy Allure Report to GitHub Pages
+        if: success()
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+          mkdir -p gh-pages
+          cp -r test-reports/allure-report/* gh-pages/
+          cd gh-pages
+          git init
+          git checkout -b gh-pages
+          git add .
+          git commit -m "Deploy Allure report"
+          git push --force https://${{ secrets.GITHUB_TOKEN }}@github.com/rainars/bigbank.git gh-pages
+    
