@@ -72,7 +72,7 @@ jobs:
       - name: 📤 Deploy Allure Report to GitHub Pages
         if: success()
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
@@ -83,6 +83,5 @@ jobs:
           git checkout -b gh-pages
           git add .
           git commit -m "Deploy Allure report"
-          git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/rainars/bigbank.git" gh-pages
-      
+          git push --force "https://${GH_PAT}@github.com/rainars/bigbank.git" gh-pages        
     
