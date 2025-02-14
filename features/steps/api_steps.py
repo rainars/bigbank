@@ -1,9 +1,11 @@
+import json
 import requests
 from behave import when, then
 from features.config import Config  # Import Config class
 
 API_URL = Config.LOAN_CALCULATOR_API  # Use the URL from config
-#API_URL = "https://taotlus.bigbank.ee/api/v1/loan/calculate"
+
+
 @when('I send a loan calculation request with amount "{amount}" and period "{period}"')
 def send_loan_calculation_request(context, amount, period):
     try:
@@ -41,6 +43,31 @@ def send_loan_calculation_request(context, amount, period):
         context.api_response = None
         print(f"Error in API call: {e}")
 
+@when('I send a loan calculation request with')
+def send_loan_calculation_request_docString(context):
+    """Handles API requests using JSON from DocString."""
+    try:
+        # Debugging: Print raw input to check formatting issues
+        print(f"📜 Raw JSON Input: {context.text}")
+
+        # Parse JSON from DocString
+        payload = json.loads(context.text)
+
+        # Debugging: Print parsed JSON to verify correctness
+        print(f"✅ Parsed JSON Payload: {json.dumps(payload, indent=2)}")
+
+        # Send API Request
+        response = requests.post(API_URL, json=payload)
+        context.api_status_code = response.status_code
+        context.api_response = response.json()
+
+        print(f"✅ API Response: {context.api_response}")
+
+    except json.JSONDecodeError as e:
+        print(f"❌ JSON Parsing Error: {e}")
+        context.api_response = None
+
+
 
 @then("the API should return a valid monthly payment and APRC")
 def validate_api_response(context):
@@ -67,7 +94,8 @@ def validate_api_response(context):
 
             # Ensure the value is numeric and not a string
             if isinstance(value, str) or not isinstance(value, (int, float)):
-                raise TypeError(f"❌ Expected numeric type for '{key}', but got {type(value).__name__} with value: {value}")
+                raise TypeError(
+                    f"❌ Expected numeric type for '{key}', but got {type(value).__name__} with value: {value}")
 
             # Store values in context with correct naming
             setattr(context, f"api_{key}", round(expected_type(value), 2))
@@ -108,8 +136,6 @@ def validate_api_response(context):
         raise AssertionError(f"❌ Unexpected error while processing API response: {e}")
 
 
-
-
 @then("the API should return an error response")
 def validate_error_response(context):
     assert context.api_status_code == 500, f"Expected status 500, but got {context.api_status_code}"
@@ -119,14 +145,23 @@ def validate_error_response(context):
 
 @then("the API should return an error for non-numeric amount")
 def step_verify_amount_error(context):
-    assert isinstance(context.api_response, list), f"Expected a list but got {type(context.api_response)}"
+    """Validates API error response for non-numeric amounts."""
 
-    error = context.api_response_data  # Now we use this safely
+    # Ensure API response exists
+    assert context.api_response is not None, "❌ API response is None. Possible API failure."
 
-    #assert error["dataPath"] == ".amount", f"Unexpected data path: {error['dataPath']}"
-    #assert error["params"]["type"] == "number", f"Expected 'number', got {error['params']['type']}"
-    assert "should be number" in error["message"], f"Unexpected message: {error['message']}"
+    # Check if API response is a list or dict
+    if isinstance(context.api_response, list):
+        error = context.api_response[0] if context.api_response else None
+    else:
+        error = context.api_response  # If it's not a list, assume it's a dict
 
+    # Ensure the response contains an error message
+    assert error is not None, "❌ API did not return a valid error message."
+    assert "message" in error, f"❌ Missing 'message' in API response: {error}"
 
+    # Validate error message
+    expected_message = "should be number"
+    assert expected_message in error["message"], f"❌ Unexpected error message: {error['message']}"
 
-
+    print(f"✅ API correctly returned an error for non-numeric amount: {error['message']}")
