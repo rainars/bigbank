@@ -17,18 +17,30 @@ def send_loan_calculation_request(context, amount, period):
             "monthlyPaymentDay": 15,
             "interestRate": 15.1
         }
+
         response = requests.post(API_URL, json=payload)
-        context.api_response = response.json()
         context.api_status_code = response.status_code
+        context.api_response = response.json()  # Only call once
+
         print(f"API Response: {context.api_response}")
 
+        # If API response is a list, extract the first element
+        if isinstance(context.api_response, list):
+            if context.api_response:  # Check if the list is not empty
+                context.api_response_data = context.api_response[0]  # Take the first dictionary
+            else:
+                raise AssertionError("API response is an empty list")
+        else:
+            context.api_response_data = context.api_response
+
         # Store values for later validation
-        context.api_monthly_payment = context.api_response.get("monthlyPayment")
-        context.api_apr = context.api_response.get("apr")
+        context.api_monthly_payment = context.api_response_data.get("monthlyPayment")
+        context.api_apr = context.api_response_data.get("apr")
 
     except Exception as e:
         context.api_response = None
         print(f"Error in API call: {e}")
+
 
 @then("the API should return a valid monthly payment and APRC")
 def validate_api_response(context):
@@ -60,5 +72,18 @@ def validate_error_response(context):
     assert context.api_status_code == 500, f"Expected status 500, but got {context.api_status_code}"
     assert "error" in context.api_response or "message" in context.api_response, "No error message received"
     print(f"API Error Response: {context.api_response}")
+
+
+@then("the API should return an error for non-numeric amount")
+def step_verify_amount_error(context):
+    assert isinstance(context.api_response, list), f"Expected a list but got {type(context.api_response)}"
+
+    error = context.api_response_data  # Now we use this safely
+
+    #assert error["dataPath"] == ".amount", f"Unexpected data path: {error['dataPath']}"
+    #assert error["params"]["type"] == "number", f"Expected 'number', got {error['params']['type']}"
+    assert "should be number" in error["message"], f"Unexpected message: {error['message']}"
+
+
 
 
