@@ -1,0 +1,2 @@
+Step failed: I set the loan period to ""6""
+Exception: Expected loan period "6", but got 6
