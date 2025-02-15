@@ -245,7 +245,19 @@ Feature: Loan Calculator Monthly Payment API
 
 
   Scenario Outline: Validate API rejects invalid administration fees
-    When I send a loan calculation request with amount "5000", period "12", interest rate "15.1", and administration fee "<administrationFee>"
+       When I send a loan calculation request with
+  """
+  {
+    "currency": "EUR",
+    "productType": "SMALL_LOAN_EE01",
+    "maturity": 12,
+    "administrationFee": <administrationFee>,
+    "conclusionFee": 100,
+    "amount": 5000,
+    "monthlyPaymentDay": 15,
+    "interestRate": 15.1
+  }
+  """
     Then the API should return an error for non-numeric amount
 
     Examples:

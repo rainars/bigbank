@@ -4,7 +4,7 @@ Feature: Loan Calculator Monthly Payment
     Given the loan calculator page is opened
     When I set the loan amount to "<amount>"
     And I set the loan period to "<period>"
-    Then the monthly payment should not be "€0"
+    Then the monthly payment should not be invalid
 
     Examples:
       | amount   | period |
@@ -27,7 +27,7 @@ Feature: Loan Calculator Monthly Payment
     Given the loan calculator page is opened
     When I set the loan amount to "<amount>"
     And I set the loan period to "<period>"
-    Then the monthly payment should not be "€0"
+    Then the monthly payment should not be invalid
 
     Examples:
       | amount | period |

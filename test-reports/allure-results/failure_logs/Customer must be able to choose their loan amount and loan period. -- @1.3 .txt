@@ -1,0 +1,2 @@
+Step failed: the monthly payment should be a valid positive number
+Exception: ❌ Monthly payment is NOT a valid number: €1,461.21

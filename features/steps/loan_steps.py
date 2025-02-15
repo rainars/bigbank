@@ -55,14 +55,30 @@ def verify_saved_loan_amount(context, expected_amount):
     assert loan_amount == expected_amount, f"❌ Expected loan amount '{expected_amount}', but got '{loan_amount}'"
 
 
-@then('the monthly payment should not be "{value}"')
-def verify_monthly_payment(context, value):
-    # Get the updated monthly payment value
-    monthly_payment = context.loan_calculator.get_monthly_payment()
-    print(f"Displayed Monthly Payment: {monthly_payment}")
+@then('the monthly payment should not be invalid')
+def verify_monthly_payment(context):
+    """Validates the monthly payment is a valid positive number (not zero, negative, empty, or non-numeric)."""
 
-    # Verify the monthly payment is not the expected invalid value
-    assert monthly_payment != value, f"Expected monthly payment to be non-zero, but got {monthly_payment}"
+    # Get the displayed monthly payment value
+    monthly_payment_raw = context.loan_calculator.get_monthly_payment()
+    print(f"🔍 Displayed Monthly Payment: {monthly_payment_raw}")
+
+    # Remove currency symbols (€ or $) and commas (for thousands formatting)
+    monthly_payment_cleaned = monthly_payment_raw.replace("€", "").replace(",", "").strip()
+
+    try:
+        # Convert cleaned value to float
+        monthly_payment = float(monthly_payment_cleaned)
+
+        # Perform assertions
+        assert monthly_payment > 0, f"❌ Monthly payment must be greater than zero, but got {monthly_payment}"
+        assert isinstance(monthly_payment,
+                          (int, float)), f"❌ Monthly payment must be a number, but got {type(monthly_payment).__name__}"
+
+    except ValueError:
+        raise AssertionError(f"❌ Monthly payment is NOT a valid number: {monthly_payment_raw}")
+
+    print(f"✅ Valid Monthly Payment: {monthly_payment}")
 
 
 @then('the loan amount "{value}" should persist after saving')
