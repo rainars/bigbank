@@ -11,6 +11,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - name: 🛠 Checkout Repository
         uses: actions/checkout@v4
@@ -44,6 +45,13 @@ jobs:
             behave --format=behave_html_formatter:HTMLFormatter --outfile=/app/test-reports/report.html \
                    --format=allure_behave.formatter:AllureFormatter -o /app/test-reports/allure-results || true
 
+      - name: 📤 Upload Failure Screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-screenshots
+          path: test-reports/allure-results/failure_screenshots/
+          if-no-files-found: ignore
+
       - name: 📤 Upload Behave HTML Report
         uses: actions/upload-artifact@v4
         with:
@@ -70,7 +78,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: 📤 Deploy Updated Allure Report to GitHub Pages
-        if: success()
+        if: success() || failure()
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
@@ -84,5 +92,3 @@ jobs:
           git add .
           git commit -m "🔄 Auto-update Allure report on $(date)"
           git push --force origin gh-pages
-     
-    

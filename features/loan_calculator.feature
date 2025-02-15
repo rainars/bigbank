@@ -8,7 +8,7 @@ Feature: Loan Calculator Monthly Payment
 
     Examples:
       | amount   | period |
-      | 30000    | 6      |
+      | 30000    | "6"    |
       | 30000    | 12     |
       | 30000    | 24     |
       | 30000    | 36     |

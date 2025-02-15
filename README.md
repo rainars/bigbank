@@ -10,6 +10,18 @@ These tests run inside a **Docker container via GitHub Actions**, and generate *
 - 📊 **Loan Calculation Accuracy** – Verifies monthly payments, APRC, fees
 - 🛠 **Allure & HTML Reports** – Easy test analysis & debugging
 
+
+## 🖥️ Technologies Used
+
+- **Python 3.10+** – Main programming language for automation
+- **Behave** – BDD framework
+- **Requests** – HTTP client for API interactions
+- **Playwright** – UI automation
+- **Allure Report** – For generating test execution reports
+- **Docker** – Containerized execution of tests
+- **GitHub Actions** – CI/CD automation
+- **GitHub Pages** – Hosting test reports for easy access
+
 ## ⚙️ CI/CD Pipeline (GitHub Actions)
 
 ✅ **GitHub Actions Workflow** - [View Here](https://github.com/rainars/test/actions)  
