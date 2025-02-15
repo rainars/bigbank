@@ -1,0 +1,2 @@
+Step failed: the API should return a valid monthly payment and APRC
+Exception: ❌ monthlyPayment is missing in API response.

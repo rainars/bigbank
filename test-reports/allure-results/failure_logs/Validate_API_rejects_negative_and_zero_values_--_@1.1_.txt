@@ -1,0 +1,2 @@
+Step failed: I send a loan calculation request with
+Exception: ❌ API request failed! No response received.

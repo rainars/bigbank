@@ -9,3 +9,7 @@ class LoanCalculatorLocators:
     # General actions
     WAIT_FOR_MONTHLY_PAYMENT = "p.bb-labeled-value__value:visible"
     BODY = "body"
+    # Submit button inside the modal (JÄTKA button)
+    MODAL_SUBMIT_BUTTON = "button.bb-calculator-modal__submit-button"
+    # Enabled Save button (JÄTKA button that is not disabled)
+    ENABLED_SAVE_BUTTON = "button.bb-calculator-modal__submit-button:not([disabled])"

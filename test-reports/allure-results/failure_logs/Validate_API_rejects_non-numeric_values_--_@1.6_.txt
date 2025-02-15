@@ -1,0 +1,2 @@
+Step failed: the API should return an error for non-numeric amount
+Exception: 'Context' object has no attribute 'loan_api'

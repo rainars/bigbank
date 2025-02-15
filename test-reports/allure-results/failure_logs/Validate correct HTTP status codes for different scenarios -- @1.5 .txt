@@ -1,0 +1,2 @@
+Step failed: the API should return status code 400
+Exception: ❌ Expected status code 400, but got 200

@@ -7,21 +7,21 @@ Feature: Loan Calculator Monthly Payment
     Then the monthly payment should not be invalid
 
     Examples:
-      | amount   | period |
-      | 30000    | "6"    |
-      | 30000    | 12     |
-      | 30000    | 24     |
-      | 30000    | 36     |
-      | 30000    | 48     |
-      | 30000    | 60     |
-      | 30000    | 120    |
-      | 500      | 6      |
-      | 500      | 12     |
-      | 500      | 24     |
-      | 500      | 36     |
-      | 500      | 48     |
-      | 500      | 60     |
-      | 500      | 120    |
+      | amount | period |
+      | 30000  | "6"    |
+      | 30000  | 12     |
+      | 30000  | 24     |
+      | 30000  | 36     |
+      | 30000  | 48     |
+      | 30000  | 60     |
+      | 30000  | 120    |
+      | 500    | 6      |
+      | 500    | 12     |
+      | 500    | 24     |
+      | 500    | 36     |
+      | 500    | 48     |
+      | 500    | 60     |
+      | 500    | 120    |
 
   Scenario Outline: Edge cases - Verify modal accepts only positive number values
     Given the loan calculator page is opened

@@ -9,26 +9,29 @@ def open_loan_calculator_page(context):
     context.loan_calculator = LoanCalculatorPage(context.page)
     context.loan_calculator.open(Config.LOAN_CALCULATOR_URL)
 
+
 @when('I set the loan amount to "{amount}"')
 def set_loan_amount(context, amount):
     scenario_name = context.scenario.name  # Capture scenario name
     context.loan_calculator.set_loan_amount(amount, scenario_name)
+
 
 @when('I set the loan period to "{period}"')
 def set_loan_period(context, period):
     scenario_name = context.scenario.name  # Correct variable name
     context.loan_calculator.set_loan_period(period, scenario_name)
 
+
 @when("I close the loan calculator without saving")
 def close_modal_without_saving(context):
     context.loan_calculator.close_modal_without_saving()
 
+
 @when("I reopen the loan calculator")
 def reopen_loan_calculator(context):
     context.loan_calculator.click_edit_amount_button()
-    print("✅ Clicked Edit Button to reopen calculator")
     context.page.wait_for_selector("input[name='header-calculator-amount']", state="visible")
-    print("✅ Loan calculator modal reopened successfully")
+
 
 @then("the loan amount should be the default value")
 def verify_default_loan_amount(context):
@@ -46,7 +49,6 @@ def verify_default_loan_period(context):
 def click_save_button(context):
     context.loan_calculator.click_save_button()
     context.page.wait_for_timeout(1000)  # Allow data to save before validation
-    print("✅ Saved loan data by clicking the save button.")
 
 
 @then("the loan amount should be \"{expected_amount}\"")
@@ -61,7 +63,6 @@ def verify_monthly_payment(context):
 
     # Get the displayed monthly payment value
     monthly_payment_raw = context.loan_calculator.get_monthly_payment()
-    print(f"🔍 Displayed Monthly Payment: {monthly_payment_raw}")
 
     # Remove currency symbols (€ or $) and commas (for thousands formatting)
     monthly_payment_cleaned = monthly_payment_raw.replace("€", "").replace(",", "").strip()
@@ -78,8 +79,6 @@ def verify_monthly_payment(context):
     except ValueError:
         raise AssertionError(f"❌ Monthly payment is NOT a valid number: {monthly_payment_raw}")
 
-    print(f"✅ Valid Monthly Payment: {monthly_payment}")
-
 
 @then('the loan amount "{value}" should persist after saving')
 def verify_loan_amount_persistence(context, value):
@@ -95,7 +94,6 @@ def verify_loan_amount_persistence(context, value):
     assert saved_amount_clean == expected_amount_clean, (
         f"❌ Expected loan amount '{expected_amount_clean}', but got '{saved_amount_clean}'"
     )
-    print(f"✅ Loan amount persisted correctly: {saved_amount_clean}")
 
 
 @then("the calculated monthly payment should match the API result")

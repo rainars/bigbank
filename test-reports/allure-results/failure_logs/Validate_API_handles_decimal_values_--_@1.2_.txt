@@ -1,0 +1,2 @@
+Step failed: I send a loan calculation request with
+Exception: 'LoanCalculatorAPI' object has no attribute 'BASE_URL'

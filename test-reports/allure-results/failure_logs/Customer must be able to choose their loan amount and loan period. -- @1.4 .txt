@@ -1,2 +1,2 @@
-Step failed: the monthly payment should be a valid positive number
-Exception: ❌ Monthly payment is NOT a valid number: €1,047.22
+Step failed: the loan calculator page is opened
+Exception: 'LoanCalculatorPage' object has no attribute 'open'

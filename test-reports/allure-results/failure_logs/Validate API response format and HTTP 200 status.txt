@@ -1,0 +1,2 @@
+Step failed: the API response should contain
+Exception: ❌ Expected 'monthlyPayment' to be int, but got float
