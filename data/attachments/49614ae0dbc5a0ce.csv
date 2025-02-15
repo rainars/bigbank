@@ -1,0 +1,4 @@
+key,type
+monthlyPayment,float
+apr,float
+totalRepayableAmount,float
