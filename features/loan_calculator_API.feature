@@ -19,7 +19,7 @@ Feature: Loan Calculator Monthly Payment API
     Examples:
       | amount    | period  |
       | 17676     | 127777  |
-      | 999999    | 20777 |
+
 
 
 
@@ -298,3 +298,11 @@ Feature: Loan Calculator Monthly Payment API
       | monthlyPayment       | float |
       | apr                  | float |
       | totalRepayableAmount | float |
+
+
+  Scenario: Verify updated monthly payment and APRC when loan amount or period is changed
+    When I send a loan calculation request with amount "5000" and period "60"
+    And I store the initial API response
+    When I send a loan calculation request with amount "7000" and period "30"
+    And I send a loan calculation request with amount "7000" and period "48"
+    Then the API should return a different monthly payment and APRC

@@ -1,0 +1,2 @@
+Step failed: store the initial API response
+Exception: ❌ No API response stored before this step. Run API request first!

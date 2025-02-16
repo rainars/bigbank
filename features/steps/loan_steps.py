@@ -112,3 +112,20 @@ def verify_payment_matches_api(context):
     assert displayed_payment == round(float(context.api_monthly_payment), 2), (
         f"Displayed payment ({displayed_payment}) does not match API payment ({context.api_monthly_payment})"
     )
+
+
+@when("I store the displayed monthly payment")
+def store_ui_monthly_payment(context):
+    """Stores the initial monthly payment from UI for comparison after changes."""
+    context.initial_ui_payment = context.loan_calculator.get_monthly_payment()
+   
+
+
+@then("the displayed monthly payment should be different")
+def verify_ui_payment_changes(context):
+    """Verifies that the UI updates the monthly payment when loan values change."""
+    new_ui_payment = context.loan_calculator.get_monthly_payment()
+    assert new_ui_payment != context.initial_ui_payment, (
+        f"❌ Monthly Payment in UI did not change! Initial: {context.initial_ui_payment}, New: {new_ui_payment}"
+    )
+

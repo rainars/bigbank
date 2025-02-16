@@ -68,3 +68,11 @@ Feature: Loan Calculator Monthly Payment
       | 30000  | 16     | 30000           |
 
 
+  Scenario: Verify updated monthly payment in UI when amount or period is changed
+    Given the loan calculator page is opened
+    When I set the loan amount to "5000"
+    And I set the loan period to "60"
+    And I store the displayed monthly payment
+    When I set the loan amount to "7000"
+    And I set the loan period to "40"
+    Then the displayed monthly payment should be different

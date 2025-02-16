@@ -192,3 +192,32 @@ def verify_api_response_structure(context):
         assert isinstance(actual_value, expected_python_type), (
             f"❌ Expected '{key}' to be {expected_type}, but got {type(actual_value).__name__}"
         )
+
+@when("I store the initial API response")
+def store_initial_api_response(context):
+    """Stores the initial API response values for comparison after changes."""
+    assert hasattr(context, "api_monthly_payment"), "❌ No API response stored before this step. Run API request first!"
+
+    # Store values for later comparison
+    context.initial_monthly_payment = context.api_monthly_payment
+    context.initial_apr = context.api_apr
+
+    print(f"📌 Stored Initial Values - Monthly Payment: {context.initial_monthly_payment}, APRC: {context.initial_apr}")
+
+@then("the API should return a different monthly payment and APRC")
+def verify_updated_calculations(context):
+    """Verifies that the updated loan values result in a different monthly payment and APRC."""
+
+    # Ensure the API request was made before checking response
+    assert hasattr(context, "api_monthly_payment"), "❌ API request failed or not executed before this step!"
+
+    # Ensure new values are different from initial values
+    assert context.api_monthly_payment != context.initial_monthly_payment, (
+        f"❌ Monthly Payment did not change! Initial: {context.initial_monthly_payment}, New: {context.api_monthly_payment}"
+    )
+
+    assert context.api_apr != context.initial_apr, (
+        f"❌ APRC did not change! Initial: {context.initial_apr}, New: {context.api_apr}"
+    )
+
+    print(f"✅ API correctly recalculated values: New Monthly Payment: {context.api_monthly_payment}, New APRC: {context.api_apr}")
