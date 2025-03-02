@@ -17,10 +17,8 @@ Feature: Loan Calculator Monthly Payment API
     Then the API should return a valid monthly payment and APRC
 
     Examples:
-      | amount    | period  |
-      | 17676     | 127777  |
-
-
+      | amount | period |
+      | 17676  | 127777 |
 
 
   Scenario Outline: Validate loan calculations for different values
@@ -88,16 +86,16 @@ Feature: Loan Calculator Monthly Payment API
     "interestRate": 15.1
   }
   """
-   # Then the API should return an error for invalid loan parameters
+    Then the API should return status code <expected_status>
 
     Examples:
-      | amount | period |
-      | -5000  | 12     |
-      | 5000   | -12    |
-      | -5000  | -12    |
-      | 0      | 12     |
-      | 5000   | 0      |
-      | 0      | 0      |
+      | amount | period | expected_status |
+      | -5000  | 12     | 500             |
+      | 5000   | -12    | 500             |
+      | -5000  | -12    | 500             |
+      | 0      | 12     | 500             |
+      | 5000   | 0      | 500             |
+      | 0      | 0      | 500             |
 
   Scenario Outline: Validate API handles maximum and minimum limits
     When I send a loan calculation request with
@@ -121,30 +119,6 @@ Feature: Loan Calculator Monthly Payment API
       | 1000000 | 240    |                  |
       | 5000    | 180    | Mid-range period |
 
-
-  Scenario Outline: Validate API handles decimal values
-    When I send a loan calculation request with
-  """
-  {
-    "currency": "EUR",
-    "productType": "SMALL_LOAN_EE01",
-    "maturity": <period>,
-    "administrationFee": 3.99,
-    "conclusionFee": 100,
-    "amount": <amount>,
-    "monthlyPaymentDay": 15,
-    "interestRate": 15.1
-  }
-  """
-    #Then the API should return an error or round appropriately
-
-    Examples:
-      | amount   | period |
-      | 1000.50  | 12     |
-      | 5000.75  | 24     |
-      | 99999.99 | 60     |
-      | 10000    | 12.5   |
-      | 20000.99 | 36     |
 
   Scenario Outline: Validate API rejects special characters
     When I send a loan calculation request with

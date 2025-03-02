@@ -1,2 +1,2 @@
-Step failed: I send a loan calculation request with
-Exception: ❌ API request failed! No response received.
+Step failed: the API should return status code 400
+Exception: ❌ Expected status code 400, but got 500
